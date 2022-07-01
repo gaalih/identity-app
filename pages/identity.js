@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import UserImage from "../public/user.svg";
-import UserImage2 from "../public/user2.svg";
+import { render } from "react-dom";
 
 function Formidentity() {
   const [getImage, setImage] = useState("");
+  const [getImageValid, setImageValid] = useState("");
 
   let getBase64 = (file) => {
     return new Promise((resolve) => {
@@ -19,7 +20,7 @@ function Formidentity() {
       // on reader load somthing...
       reader.onload = () => {
         // Make a fileInfo Object
-        console.log("Called", reader);
+        // console.log("Called", reader);
         baseURL = reader.result;
         // console.log(baseURL);
         resolve(baseURL);
@@ -30,14 +31,25 @@ function Formidentity() {
 
   const changeImage = (e) => {
     let file = e.target.files[0];
-    getBase64(file)
-      .then((result) => {
-        console.log("Files adalah", result);
-        setImage(result);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+    let fileName = e.target.value;
+    const fileTypeAllowed = ["jpg", "jpeg", "png"];
+    let fileExtension = fileName.split(".").pop();
+    console.log(fileExtension);
+    if (fileTypeAllowed.indexOf(fileExtension) > -1) {
+      getBase64(file)
+        .then((result) => {
+          // console.log("Kode base64 Dari File Tersebut Adalah: ", result);
+          setImageValid("");
+          setImage(result);
+        })
+        .catch((err) => {
+          console.log("Error Load ", err);
+        });
+    } else {
+      setImageValid("Tidak valid");
+      setImage(UserImage);
+      console.log("File Extension tidak valid");
+    }
   };
 
   return (
@@ -98,6 +110,7 @@ function Formidentity() {
                     <div className="avatar">
                       <div className="w-24 mask mask-squircle">
                         <Image
+                          // src={getImage !== "" ? UserImage : getImage}
                           src={!getImage ? UserImage : getImage}
                           width={100}
                           height={100}
@@ -121,7 +134,14 @@ function Formidentity() {
                           hover:file:text-grey-700 "
                         />
                       </label>
-                      {/* <p>{this.base64code}</p> */}
+
+                      {getImageValid == "" ? (
+                        ""
+                      ) : (
+                        <small className="mt-2 text-red-600">
+                          <i>Image Format Not Valid</i>
+                        </small>
+                      )}
                     </div>
                   </div>
                 </div>
@@ -137,9 +157,6 @@ function Formidentity() {
                     </button>
                   </div>
                 </div>
-                <textarea cols="30" rows="10">
-                  {getImage}
-                </textarea>
               </form>
             </div>
           </div>
