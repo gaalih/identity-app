@@ -1,6 +1,45 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
+import Image from "next/image";
+import UserImage from "../public/user.svg";
+import UserImage2 from "../public/user2.svg";
 
 function Formidentity() {
+  const [getImage, setImage] = useState("");
+
+  let getBase64 = (file) => {
+    return new Promise((resolve) => {
+      let fileInfo;
+      let baseURL = "";
+      // Make new FileReader
+      let reader = new FileReader();
+
+      // Convert the file to base64 text
+      reader.readAsDataURL(file);
+
+      // on reader load somthing...
+      reader.onload = () => {
+        // Make a fileInfo Object
+        console.log("Called", reader);
+        baseURL = reader.result;
+        // console.log(baseURL);
+        resolve(baseURL);
+      };
+      // console.log(fileInfo);
+    });
+  };
+
+  const changeImage = (e) => {
+    let file = e.target.files[0];
+    getBase64(file)
+      .then((result) => {
+        console.log("Files adalah", result);
+        setImage(result);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
   return (
     <div id="form-identity">
       <div className="grid grid-cols-6 gap-4">
@@ -58,13 +97,20 @@ function Formidentity() {
                   <div className="w-4/6">
                     <div className="avatar">
                       <div className="w-24 mask mask-squircle">
-                        <img src="https://placeimg.com/192/192/people" />
+                        <Image
+                          src={!getImage ? UserImage : getImage}
+                          width={100}
+                          height={100}
+                        />
                       </div>
                     </div>
                     <div className="my-3">
                       <label className="block">
                         <span className="sr-only">Choose File</span>
                         <input
+                          // onChange={(img) => changeImage(img.target.files)}
+                          onChange={changeImage}
+                          // onChange={this.handleFileInputChange}
                           type="file"
                           className="text-sm text-grey-500
                           file:mr-5 file:py-2 file:px-6
@@ -75,6 +121,7 @@ function Formidentity() {
                           hover:file:text-grey-700 "
                         />
                       </label>
+                      {/* <p>{this.base64code}</p> */}
                     </div>
                   </div>
                 </div>
@@ -90,6 +137,9 @@ function Formidentity() {
                     </button>
                   </div>
                 </div>
+                <textarea cols="30" rows="10">
+                  {getImage}
+                </textarea>
               </form>
             </div>
           </div>
