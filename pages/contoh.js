@@ -3,7 +3,7 @@ import Image from "next/image";
 // import UserImage from "../public/user.svg";
 import { useRouter } from "next/router";
 import UserImage from "./img/user.svg";
-import { CameraIcon } from "./elements/CameraIcon";
+import { CameraIcon } from "../elements/CameraIcon";
 import Webcam from "react-webcam";
 import {
   Grid,
