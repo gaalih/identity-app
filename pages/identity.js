@@ -1,13 +1,16 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import Image from "next/image";
 import UserImage from "../public/user.svg";
 // import Link from "next/link";
 import { useRouter } from "next/router";
 import { render } from "react-dom";
+import Webcam from "react-webcam";
 
 function Formidentity() {
   const [getImage, setImage] = useState("");
   const [getImageValid, setImageValid] = useState("");
+  const webcamRef = useRef();
+  const [imgSrc, setImgSrc] = useState();
 
   let getBase64 = (file) => {
     return new Promise((resolve) => {
@@ -71,6 +74,10 @@ function Formidentity() {
       </div>
     );
   };
+  const capture = useCallback(() => {
+    const imageSrc = webcamRef.current.getScreenshot();
+    setImgSrc(imageSrc);
+  }, [webcamRef, setImgSrc]);
 
   const { query } = useRouter();
   return (
@@ -140,23 +147,26 @@ function Formidentity() {
                   <div className="w-4/6">
                     <div className="avatar">
                       <div className="w-24 mask mask-squircle">
-                        <Image
-                          // src={getImage !== "" ? UserImage : getImage}
-                          src={!getImage ? UserImage : getImage}
-                          width={100}
-                          height={100}
-                        />
+                      <Webcam
+                        audio={false}
+                        ref={webcamRef}
+                        screenshotFormat="image/jpeg"
+                      />
+                      <label onClick={capture}>Capture photo</label>
                       </div>
                     </div>
                     <div className="my-3">
                       <label className="block">
                         <span className="sr-only">Choose File</span>
+                        <Image
+                          src={!imgSrc ? UserImage : imgSrc}
+                          width={100}
+                          height={100}
+                        />
                         <input
-                          // onChange={(img) => changeImage(img.target.files)}
                           onChange={changeImage}
                           type="file"
                           name="image"
-                          required
                           className="text-sm text-grey-500
                           file:mr-5 file:py-2 file:px-6
                           file:rounded-full file:border-0
