@@ -1,9 +1,10 @@
-import { React, useState } from "react";
+import { React, useState, useEffect, useRef, useCallback } from "react";
 import Image from "next/image";
 // import UserImage from "../public/user.svg";
 import { useRouter } from "next/router";
 import UserImage from "./img/user.svg";
 import { CameraIcon } from "./elements/CameraIcon";
+import Webcam from "react-webcam";
 import {
   Grid,
   Card,
@@ -14,6 +15,7 @@ import {
   Button,
   Row,
   Col,
+  Modal,
 } from "@nextui-org/react";
 
 export default function App() {
@@ -77,7 +79,7 @@ export default function App() {
               fullWidth
               size="md"
               label="ID Card Number"
-              placeholder="Primary"
+              placeholder="Your ID Card Number"
               color="primary"
             />
             <Spacer y={1} />
@@ -102,6 +104,7 @@ export default function App() {
                     icon={<CameraIcon fill="currentColor" />}
                     className="bg-blue-500 hover:bg-blue-400"
                     size="md"
+                    onClick={handler}
                     auto
                   >
                     Take A Selfie
@@ -113,15 +116,12 @@ export default function App() {
                     onChange={changeImage}
                     type="file"
                     name="image"
-                    className="text-sm text-grey-500
-                          file:mr-5 file:py-2 file:px-6
-                          file:rounded-xl file:border-0
-                          file:text-sm file:font-medium
-                          file:bg-blue-500 file:text-white
-                          hover:file:cursor-pointer hover:file:bg-blue-400
-                          hover:file:text-grey-700 "
+                    id="file"
+                    class="inputfile"
                   />
+                  <label for="file">Choose a file</label>
                 </Col>
+                <Col></Col>
               </Row>
               {getImageValid == "" ? (
                 ""
@@ -167,11 +167,58 @@ export default function App() {
     );
   };
 
+  const webcamRef = useRef();
+  //   const [imgSrc, setImgSrc] = useState();
+  const capture = useCallback(() => {
+    closeHandler();
+    const imageSrc = webcamRef.current.getScreenshot();
+    setImage(imageSrc);
+  }, [webcamRef, setImage]);
+  const [visible, setVisible] = useState(false);
+  const handler = () => setVisible(true);
+
+  const closeHandler = () => {
+    setVisible(false);
+    console.log("closed");
+  };
+
+  const ModalSelfie = () => {
+    return (
+      <Modal
+        closeButton
+        aria-labelledby="modal-title"
+        open={visible}
+        onClose={closeHandler}
+      >
+        <Modal.Header>
+          <Text id="modal-title" size={18}>
+            Take Your
+            <Text b size={18}>
+              Photo
+            </Text>
+          </Text>
+        </Modal.Header>
+        <Modal.Body>
+          <Webcam audio={false} ref={webcamRef} screenshotFormat="image/jpeg" />
+        </Modal.Body>
+        <Modal.Footer>
+          <Button auto flat color="error" onClick={closeHandler}>
+            Cancel
+          </Button>
+          <Button auto onClick={capture} className="bg-blue-400">
+            Take Your Photo
+          </Button>
+        </Modal.Footer>
+      </Modal>
+    );
+  };
+
   return (
     <div className="-mt-8">
       <Grid.Container gap={2} justify="center">
         <Grid xs={10} md={6} lg={6}>
           <CardItem />
+          <ModalSelfie />
         </Grid>
       </Grid.Container>
     </div>
