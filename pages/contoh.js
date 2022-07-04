@@ -111,9 +111,12 @@ export default function App() {
         } catch (err) {
           console.log(err);
         }
+      } else {
+        alert('Failed to enroll. Please retry')
       }
     } catch (err) {
       console.log(err);
+      alert('Failed to enroll. Please retry')
     } 
   } 
 
