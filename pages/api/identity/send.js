@@ -1,10 +1,14 @@
 async function send(req, res) {
   // Rest of the API logic
-  // res.json({ message: "Hello Everyone!" + "-" + form.id });
   if (req.method === "GET") {
     res.status(200).json("Not Available");
   } else if (req.method === "POST") {
     const form = req.body;
+    let imageCode = form.image;
+    // imageCode = imageCode.substring(imageCode.search(",") + 1);
+    imageCode = imageCode.split(",")[1];
+    // res.json({ message: "Hello Everyone!" + "-" + imageCode });
+
     const formData = {
       transactionId: form.sessionid + Date.now(),
       component: "WEB",
@@ -24,15 +28,17 @@ async function send(req, res) {
       biometrics: [
         {
           position: "F",
-          image: form.image,
+          image: imageCode,
           template: null,
           type: "Face",
         },
       ],
     };
+    // res.json(formData);
 
     const response = await fetch(
-      "https://sandbox.cdi-systems.com:8443/eKYC_MW/request",
+      // "https://sandbox.cdi-systems.com:8443/eKYC_MW/request",
+      "https://949ca44c-0e92-4b8e-97f6-db4802130f03.mock.pstmn.io/verify",
       {
         method: "POST",
         body: JSON.stringify(formData),
@@ -42,8 +48,19 @@ async function send(req, res) {
         // },
       }
     );
-    const data = await response.json();
-    res.json(data);
+
+    try {
+      const result = await response.json();
+      res.status(200).json({ result });
+    } catch (err) {
+      res.status(500).json({ error: "failed to load data" });
+    }
+
+    // res.json({ message: "Not Error!" + "-" + res.status });
+
+    // const data = await response.json();
+    // res.json(res.status);
+    // res.json(data);
   }
 }
 
