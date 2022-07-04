@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import Image from "next/image";
 // import UserImage from "../public/user.svg";
-import Axios from "axios";
+// import Axios from "axios";
 import { useRouter } from "next/router";
 import UserImage from "./img/user.svg";
 import { CameraIcon } from "../elements/CameraIcon";
