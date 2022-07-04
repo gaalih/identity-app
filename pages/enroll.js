@@ -17,6 +17,7 @@ import {
   Row,
   Col,
   Modal,
+  Loading,
 } from "@nextui-org/react";
 
 export default function App() {
@@ -31,6 +32,29 @@ export default function App() {
   const phoneRef = useRef();
   const idCardRef = useRef();
   const uploadRef = useRef();
+
+  const webcamRef = useRef();
+  const capture = useCallback(() => {
+    closeHandler();
+    const imageSrc = webcamRef.current.getScreenshot();
+    setImage(imageSrc);
+    uploadRef.current.value = "";
+  }, [webcamRef, setImage]);
+
+  // modal variable
+  const [photoVisible, setPhotoVisible] = useState(false);
+  const [confirmVisible, setConfirmVisible] = useState(false);
+  const [loadingVisible, setLoadingVisible] = useState(false);
+  const [getResponseServer, setResponseServer] = useState("");
+  const handlerPhoto = () => setPhotoVisible(true);
+  const handlerConfirm = () => setConfirmVisible(true);
+
+  const closeHandler = () => {
+    setPhotoVisible(false);
+    setConfirmVisible(false);
+    setLoadingVisible(false);
+  };
+  // end modal variable
 
   //   alert("session ID : ", query);
 
@@ -62,14 +86,52 @@ export default function App() {
           console.log("Error Load ", err);
         });
     } else {
-      setImageValid("Tidak valid");
-      setImage("");
-      console.log("File Extension tidak valid");
+      if (fileName != "") {
+        setImageValid("Not valid");
+        setImage("");
+        console.log("File Extension Not Valid");
+      }
     }
+  };
+
+  const sendToBot = async (result) => {
+    const verificationResult =
+      result.verificationResult == true ? "OK" : "FAIL";
+    const url =
+      "https://api.infobip.com/bots/webhook/" +
+      result.sessionid +
+      "?resultparam=" +
+      verificationResult +
+      "";
+    const response = await fetch(url);
+    const responseData = await response.json();
+    console.log(responseData);
+    // try {
+    //   switch (responseData.serviceException.errorCode) {
+    //     case 40401:
+    //       setResponseServer(
+    //         "Error! " +
+    //           responseData.serviceException.errorCode +
+    //           " | " +
+    //           responseData.serviceException.message
+    //       );
+
+    //       break;
+    //     default:
+    //       setResponseServer("success");
+    //       break;
+    //   }
+    // } catch (err) {
+    //   const errorMsg =
+    //     "Error! " + response.status + " | " + response.statusText;
+    //   setResponseServer(errorMsg);
+    // }
   };
 
   const submitForm = async () => {
     closeHandler();
+    setLoadingVisible(true);
+    setResponseServer("");
     const response = await fetch("/api/identity/send", {
       method: "POST",
       body: JSON.stringify({
@@ -83,26 +145,39 @@ export default function App() {
         "Access-Control-Allow-Origin": "*",
       },
     });
-    const data = await response.json();
-    console.log(data);
-  };
 
-  const webcamRef = useRef();
-  const capture = useCallback(() => {
-    closeHandler();
-    const imageSrc = webcamRef.current.getScreenshot();
-    setImage(imageSrc);
-    uploadRef.current.value = "";
-  }, [webcamRef, setImage]);
+    let result = "";
+    let countdown = 5000;
+    try {
+      result = await response.json();
+      result.result.sessionid = sessionid;
+      switch (result.result.verificationResult) {
+        case true:
+          setResponseServer("success");
+          sendToBot(result.result);
+          countdown = 2000;
+          break;
+        case false:
+          setResponseServer("Failed.");
+          sendToBot(result.result);
+          break;
+        default:
+          setResponseServer("Something Wrong");
+          break;
+      }
+    } catch (err) {
+      const errorMsg =
+        "Error! " + response.status + " | " + response.statusText;
+      setResponseServer(errorMsg);
+    }
 
-  const [photoVisible, setPhotoVisible] = useState(false);
-  const [confirmVisible, setConfirmVisible] = useState(false);
-  const handlerPhoto = () => setPhotoVisible(true);
-  const handlerConfirm = () => setConfirmVisible(true);
+    setTimeout(() => {
+      closeHandler();
+    }, countdown);
 
-  const closeHandler = () => {
-    setPhotoVisible(false);
-    setConfirmVisible(false);
+    // setTimeout(() => closeHandler(), 3000);
+
+    // const data = await response.json();
   };
 
   const ModalSelfie = () => {
@@ -157,6 +232,57 @@ export default function App() {
             Yes
           </Button>
         </Modal.Footer>
+      </Modal>
+    );
+  };
+
+  const ModalLoading = () => {
+    let msg = "";
+    if (getResponseServer == "") {
+      msg = "Processing Data";
+    } else if (getResponseServer == "success") {
+      msg = "Successfull";
+    } else {
+      msg = getResponseServer;
+    }
+    return (
+      <Modal
+        blur
+        aria-labelledby="modal-title"
+        open={loadingVisible}
+        onClose={closeHandler}
+        preventClose
+      >
+        <Modal.Body>
+          <Text className="text-center">{msg}</Text>
+          <Spacer y={0.2} />
+          <div class="flex items-center justify-center">
+            {getResponseServer == "" ? (
+              <Loading size="lg" />
+            ) : getResponseServer == "success" ? (
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-20 w-20 text-green-500 text-center stroke-2"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+            ) : (
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                class="h-20 w-20 text-red-500 text-center stroke-2"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            )}
+          </div>
+          <Spacer y={0.2} />
+        </Modal.Body>
       </Modal>
     );
   };
@@ -287,6 +413,7 @@ export default function App() {
           </Card>
           <ModalSelfie />
           <ModalConfirm />
+          <ModalLoading />
         </Grid>
       </Grid.Container>
     </div>
