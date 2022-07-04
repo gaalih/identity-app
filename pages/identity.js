@@ -10,6 +10,8 @@ function Formidentity() {
   const [getImage, setImage] = useState("");
   const [getImageValid, setImageValid] = useState("");
   const webcamRef = useRef();
+  const phoneRef = useRef();
+  const idCardRef = useRef();
   const [imgSrc, setImgSrc] = useState();
 
   let getBase64 = (file) => {
@@ -78,7 +80,20 @@ function Formidentity() {
     const imageSrc = webcamRef.current.getScreenshot();
     setImgSrc(imageSrc);
   }, [webcamRef, setImgSrc]);
-
+  
+  const submit = async (e) => {
+    e.preventDefault();
+    try {
+      const res = await fetch(`https://949ca44c-0e92-4b8e-97f6-db4802130f03.mock.pstmn.io/verify`, {
+        method: 'POST'
+      });
+      const data = await res.json();
+      console.log(data);
+    } catch (err) {
+      console.log(err);
+    }
+    
+  } 
   const { query } = useRouter();
   return (
     <div id="form-identity">
@@ -106,6 +121,7 @@ function Formidentity() {
                     <input
                       className="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-purple-500"
                       id="inline-full-name"
+                      ref={phoneRef}
                       type="number"
                       value={query.phone}
                       readOnly="true"
@@ -127,6 +143,7 @@ function Formidentity() {
                     <input
                       className="bg-gray-200 appearance-none border-2 border-gray-200 rounded w-full py-2 px-4 text-gray-700 leading-tight focus:outline-none focus:bg-white focus:border-purple-500"
                       id="inline-full-name"
+                      ref={idCardRef}
                       type="text"
                       name="NIK"
                       required
@@ -193,7 +210,7 @@ function Formidentity() {
                   <div className="w-4/6">
                     <button
                       className="shadow w-2/4 bg-blue-500 hover:bg-blue-400 focus:shadow-outline focus:outline-none text-white font-bold py-2 px-4 rounded"
-                      type="submit"
+                      onClick={submit}
                     >
                       Sign Up
                     </button>
