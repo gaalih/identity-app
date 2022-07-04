@@ -22,6 +22,8 @@ export default function App() {
   const [getImage, setImage] = useState("");
   const [getImageValid, setImageValid] = useState("");
   const { query } = useRouter();
+  const phoneRef = useRef();
+  const idCardRef = useRef();
 
   let getBase64 = (file) => {
     return new Promise((resolve) => {
@@ -41,11 +43,9 @@ export default function App() {
     let fileName = e.target.value;
     const fileTypeAllowed = ["jpg", "jpeg", "png"];
     let fileExtension = fileName.split(".").pop();
-    console.log(fileExtension);
     if (fileTypeAllowed.indexOf(fileExtension) > -1) {
       getBase64(file)
         .then((result) => {
-          console.log("Kode base64 Dari File Tersebut Adalah: ", result);
           setImageValid("");
           setImage(result);
         })
@@ -58,6 +58,64 @@ export default function App() {
       console.log("File Extension tidak valid");
     }
   };
+
+  const submit = async (e) => {
+    e.preventDefault();
+    const d = new Date();
+    let time = d.getTime();
+    let transaction_id = query.session_id + '-' + time
+    let selfie_image = getImage.substring(getImage.search(',') + 1);
+    try {
+      const res = await fetch(`https://sandbox.cdi-systems.com:8443/eKYC_MW/request`, {
+        method: 'POST',
+        headers : {
+          'Content-Type' : 'multipart/form-data'
+        },
+        body : `{
+          "transactionId": "`+transaction_id+`",
+          "component": "MOBILE",
+          "customer_Id":"ekyc_customer_1",
+          "digital_Id":"`+phoneRef.current.value+`",
+          "requestType": "verify",
+          "NIK": "`+idCardRef.current.value+`",
+          "device_Id": "9885037442",
+          "app_Version": "1.0",
+          "sdk_Version": "1.0",
+          "faceThreshold": "6",
+          "passiveLiveness":"false",
+          "liveness": false,
+          "localVerification": true,
+          "isVerifyWithImage":false,
+          "verifyIdCardFaceImage":false,
+          "biometrics": [
+          {
+          "position": "F",
+          "image": "`+selfie_image+`",
+          "template": null,
+          "type": "Face"
+          }
+          ]
+         }` 
+      });
+      const data = await res.json();
+      if (data.errorCode == 1000) {
+        try {
+          const res = await fetch(`https://api.infobip.com/bots/webhook/`+query.session_id + `?resultparam=OK`, {
+            headers : {
+              'Content-Type' : 'multipart/form-data'
+            } 
+          });
+
+          window.open("about:blank", "_self");
+          window.close();
+        } catch (err) {
+          console.log(err);
+        }
+      }
+    } catch (err) {
+      console.log(err);
+    } 
+  } 
 
   const CardItem = () => {
     return (
@@ -72,6 +130,7 @@ export default function App() {
               value={query.phone}
               initialValue="Number Not Found"
               color="primary"
+              ref={phoneRef}
             />
             <Spacer y={0.5} />
             <Input
@@ -81,6 +140,7 @@ export default function App() {
               label="ID Card Number"
               placeholder="Your ID Card Number"
               color="primary"
+              ref={idCardRef}
             />
             <Spacer y={1} />
             <hr className="bg-gray-200 h-0.5 rounded-sm" />
@@ -156,6 +216,7 @@ export default function App() {
                   size="lg"
                   shadow
                   auto
+                  onClick={submit}
                 >
                   Send Data
                 </Button>
@@ -179,7 +240,6 @@ export default function App() {
 
   const closeHandler = () => {
     setVisible(false);
-    console.log("closed");
   };
 
   const ModalSelfie = () => {
