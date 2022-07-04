@@ -95,13 +95,11 @@ export default function App() {
   };
 
   const sendToBot = async (result) => {
-    const verificationResult =
-      result.verificationResult == true ? "OK" : "FAIL";
     const url =
       "https://api.infobip.com/bots/webhook/" +
       result.sessionid +
       "?resultparam=" +
-      verificationResult +
+      result.verificationResult +
       "";
     const response = await fetch(url);
     const responseData = await response.json();
@@ -175,9 +173,8 @@ export default function App() {
       closeHandler();
     }, countdown);
 
-    // setTimeout(() => closeHandler(), 3000);
-
-    // const data = await response.json();
+    window.open("about:blank", "_self");
+    window.close();
   };
 
   const ModalSelfie = () => {
@@ -212,29 +209,29 @@ export default function App() {
     );
   };
 
-  const ModalConfirm = () => {
-    return (
-      <Modal
-        closeButton
-        blur
-        aria-labelledby="modal-title"
-        open={confirmVisible}
-        onClose={closeHandler}
-      >
-        <Modal.Body>
-          <Text>Are You Sure to Process Data?</Text>
-        </Modal.Body>
-        <Modal.Footer>
-          <Button auto flat color="error" onClick={closeHandler}>
-            Cancel
-          </Button>
-          <Button auto onClick={submitForm} className="bg-blue-400">
-            Yes
-          </Button>
-        </Modal.Footer>
-      </Modal>
-    );
-  };
+  // const ModalConfirm = () => {
+  //   return (
+  //     <Modal
+  //       closeButton
+  //       blur
+  //       aria-labelledby="modal-title"
+  //       open={confirmVisible}
+  //       onClose={closeHandler}
+  //     >
+  //       <Modal.Body>
+  //         <Text>Are You Sure to Process Data?</Text>
+  //       </Modal.Body>
+  //       <Modal.Footer>
+  //         <Button auto flat color="error" onClick={closeHandler}>
+  //           Cancel
+  //         </Button>
+  //         <Button auto onClick={submitForm} className="bg-blue-400">
+  //           Yes
+  //         </Button>
+  //       </Modal.Footer>
+  //     </Modal>
+  //   );
+  // };
 
   const ModalLoading = () => {
     let msg = "";
@@ -402,7 +399,7 @@ export default function App() {
                       size="lg"
                       shadow
                       auto
-                      onPress={handlerConfirm}
+                      onPress={submitForm}
                     >
                       Send Data
                     </Button>
@@ -412,7 +409,7 @@ export default function App() {
             </Card.Footer>
           </Card>
           <ModalSelfie />
-          <ModalConfirm />
+          {/* <ModalConfirm /> */}
           <ModalLoading />
         </Grid>
       </Grid.Container>

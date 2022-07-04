@@ -10,7 +10,7 @@ async function send(req, res) {
     // res.json({ message: "Hello Everyone!" + "-" + imageCode });
 
     const formData = {
-      transactionId: form.sessionid + Date.now(),
+      transactionId: form.sessionid + '-'+Date.now(),
       component: "WEB",
       customer_Id: "ekyc_customer_1",
       digital_Id: form.id,
@@ -36,9 +36,10 @@ async function send(req, res) {
     };
     // res.json(formData);
 
+    try {
     const response = await fetch(
-      // "https://sandbox.cdi-systems.com:8443/eKYC_MW/request",
-      "https://949ca44c-0e92-4b8e-97f6-db4802130f03.mock.pstmn.io/verify",
+      "https://sandbox.cdi-systems.com:8443/eKYC_MW/request",
+      // "https://949ca44c-0e92-4b8e-97f6-db4802130f03.mock.pstmn.io/verify",
       {
         method: "POST",
         body: JSON.stringify(formData),
@@ -48,8 +49,6 @@ async function send(req, res) {
         // },
       }
     );
-
-    try {
       const result = await response.json();
       res.status(200).json({ result });
     } catch (err) {
