@@ -18,9 +18,11 @@ body {
 }
 
 .inputfile + label {
-  @apply cursor-pointer;
-  @apply mr-5 py-2 px-6 rounded-xl border-0 text-sm font-medium bg-blue-500 text-white;
-  /* font-size: 1.25em; */
+  @apply cursor-pointer w-full text-center;
+  @apply mr-5 px-6 rounded-sm border-0 font-medium bg-blue-500 text-white;
+  font-size: 0.875rem;
+  padding-top: 0.6rem;
+  padding-bottom: 0.6rem;
   /* font-weight: 700;
   color: white;
   background-color: black; */

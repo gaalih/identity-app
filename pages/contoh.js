@@ -12,6 +12,7 @@ import {
   Card,
   Input,
   Spacer,
+  //   Image,
   Text,
   Button,
   Row,
@@ -23,6 +24,8 @@ export default function App() {
   const { query } = useRouter();
   const sessionid = !query.sessionid ? "" : query.sessionid;
   const phone = !query.phone ? "" : query.phone;
+  //   const [getSessionID, setSessionID] = useState(sessionid);
+  //   const [getPhoneNumber, setPhoneNumber] = useState(phone);
 
   const [getImage, setImage] = useState("");
   const [getID, setID] = useState();
@@ -68,8 +71,54 @@ export default function App() {
     }
   };
 
+  //   const submitForm = () => {
+  //     Axios({
+  //       method: "POST",
+  //       url: "https://sandbox.cdi-systems.com:8443/eKYC_MW/request",
+  //       data: {
+  //         firstName: "Fred",
+  //         lastName: "Flintstone",
+  //       },
+  //     });
+  //   };
+  //   const submitForm = () => {
+  //     const url = " https://sandbox.cdi-systems.com:8443/eKYC_MW/request";
+  //     Axios.post(url, {
+  //       transactionId: "sadadasdadad-" + Date.now(),
+  //       component: "WEB",
+  //       customer_Id: "ekyc_customer_1",
+  //       digital_Id: getID,
+  //       requestType: "verify",
+  //       NIK: getID,
+  //       device_Id: "9885037442",
+  //       app_Version: "1.0",
+  //       sdk_Version: "1.0",
+  //       faceThreshold: "6",
+  //       passiveLiveness: "false",
+  //       liveness: false,
+  //       localVerification: true,
+  //       isVerifyWithImage: false,
+  //       verifyIdCardFaceImage: false,
+  //       biometrics: [
+  //         {
+  //           position: "F",
+  //           image: getImage,
+  //           template: null,
+  //           type: "Face",
+  //         },
+  //       ],
+  //     })
+  //       .then(function (response) {
+  //         console.log(response);
+  //       })
+  //       .catch(function (error) {
+  //         console.log(error);
+  //       });
+  //   };
+
   const submitForm = async () => {
-    closeHandler();
+    // const url = "https://sandbox.cdi-systems.com:8443/eKYC_MW/request";
+    // const response = await fetch(url, {
     const response = await fetch("/api/identity/send", {
       method: "POST",
       body: JSON.stringify({
@@ -88,30 +137,26 @@ export default function App() {
   };
 
   const webcamRef = useRef();
+  //   const [imgSrc, setImgSrc] = useState();
   const capture = useCallback(() => {
     closeHandler();
     const imageSrc = webcamRef.current.getScreenshot();
     setImage(imageSrc);
     uploadRef.current.value = "";
   }, [webcamRef, setImage]);
-
-  const [photoVisible, setPhotoVisible] = useState(false);
-  const [confirmVisible, setConfirmVisible] = useState(false);
-  const handlerPhoto = () => setPhotoVisible(true);
-  const handlerConfirm = () => setConfirmVisible(true);
+  const [visible, setVisible] = useState(false);
+  const handler = () => setVisible(true);
 
   const closeHandler = () => {
-    setPhotoVisible(false);
-    setConfirmVisible(false);
+    setVisible(false);
   };
 
   const ModalSelfie = () => {
     return (
       <Modal
         closeButton
-        blur
         aria-labelledby="modal-title"
-        open={photoVisible}
+        open={visible}
         onClose={closeHandler}
       >
         <Modal.Header>
@@ -137,31 +182,9 @@ export default function App() {
     );
   };
 
-  const ModalConfirm = () => {
-    return (
-      <Modal
-        closeButton
-        blur
-        aria-labelledby="modal-title"
-        open={confirmVisible}
-        onClose={closeHandler}
-      >
-        <Modal.Body>
-          <Text>Are You Sure to Process Data?</Text>
-        </Modal.Body>
-        <Modal.Footer>
-          <Button auto flat color="error" onClick={closeHandler}>
-            Cancel
-          </Button>
-          <Button auto onClick={submitForm} className="bg-blue-400">
-            Yes
-          </Button>
-        </Modal.Footer>
-      </Modal>
-    );
-  };
-
   return (
+    // <div className="-mt-8">
+    // <div className="-mt-5">
     <div>
       <Grid.Container gap={0} justify="center">
         <Grid xs={10} md={6} lg={6}>
@@ -218,7 +241,7 @@ export default function App() {
                           className="bg-blue-500 hover:bg-blue-400 w-full rounded-sm"
                           size="md"
                           // color="gradient"
-                          onClick={handlerPhoto}
+                          onClick={handler}
                         >
                           Take A Selfie
                         </Button>
@@ -276,7 +299,7 @@ export default function App() {
                       size="lg"
                       shadow
                       auto
-                      onPress={handlerConfirm}
+                      onPress={submitForm}
                     >
                       Send Data
                     </Button>
@@ -286,7 +309,6 @@ export default function App() {
             </Card.Footer>
           </Card>
           <ModalSelfie />
-          <ModalConfirm />
         </Grid>
       </Grid.Container>
     </div>
