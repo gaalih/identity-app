@@ -19,7 +19,7 @@ body {
 
 .inputfile + label {
   @apply cursor-pointer w-full text-center;
-  @apply mr-5 px-6 py-2 text-sm rounded-sm border-0 font-medium bg-blue-500 text-white;
+  @apply mr-5 px-6 py-2 text-xs sm:text-xs md:text-sm rounded-sm border-0 font-medium bg-blue-500 text-white;
   /* font-weight: 700;
   color: white;
   background-color: black; */
