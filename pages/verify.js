@@ -126,16 +126,13 @@ export default function App() {
     // }
   };
   const checkInput = () => {
-    if (getID != "" && getImage != "") {
+    if (getID != null && getImage != null) {
       setInputStatus(true);
-      console.log("success");
     } else {
       if (sessionid != "" && phone != "") {
         setInputStatus("Input must be filled. Check your data again");
-        console.log("input kosong");
       } else {
         setInputStatus("Invalid session or phone number.");
-        console.log("session kosong");
       }
     }
     setConfirmVisible(true);
@@ -171,7 +168,9 @@ export default function App() {
           countdown = 2000;
           break;
         case false:
-          setResponseServer("Failed.");
+          // sukses, tapi verificationResult nya false
+          // setResponseServer("Failed.");
+          setResponseServer("success");
           sendToBot(result.result);
           break;
         default:
@@ -181,6 +180,7 @@ export default function App() {
     } catch (err) {
       const errorMsg =
         "Error! " + response.status + " | " + response.statusText;
+      result = errorMsg;
       setResponseServer(errorMsg);
     }
 
@@ -357,144 +357,88 @@ export default function App() {
           <Card>
             {/* css={{ px: "$15", py: "$10" }} */}
             <Card.Body className="px-7 py-7 sm:px-5 sm:py-7 md:px-11">
-              <form action="">
-                <Input
-                  readOnly
-                  fullWidth
-                  type="number"
-                  size="md"
-                  label="Phone Number"
-                  value={!query.phone ? "Number Not Found" : query.phone}
-                  color="primary"
-                  ref={phoneRef}
-                />
-                <Spacer y={0.5} />
-                <Input
-                  bordered
-                  fullWidth
-                  size="md"
-                  type="number"
-                  label="ID Card Number"
-                  placeholder="Your ID Card Number"
-                  color="primary"
-                  onKeyUp={(e) => setID(e.target.value)}
-                />
-                <Spacer y={1} />
-                <hr className="bg-gray-200 h-0.5 rounded-sm" />
-                <Spacer y={0.5} />
-                <Text color="primary" className="pl-2">
-                  Photo Selfie
-                </Text>
-                <Grid.Container gap={0} justify="center">
-                  <Grid xs={12} sm={6} lg={6}>
-                    <div className="w-full md:w-full h-full m-3 mx-20 md:mx-3 sm:ml-2 sm:mt-2 md:ml-20 md:mt-3">
-                      <Image
-                        width={150}
-                        height={150}
-                        src={!getImage ? UserImage : getImage}
-                        alt="Default Image"
-                        layout="responsive"
-                        className="transition ease-in-out delay-200"
-                      />
-                    </div>
-                  </Grid>
-                  <Grid xs={12} sm={6} lg={6}>
-                    <div className="w-full h-full m-3 mx-10 md:mx-3 sm:mr-2 sm:mt-2 md:mr-20 md:mt-3">
-                      <button
-                        class="bg-blue-500 hover:bg-blue-400 flex justify-center items-center px-6 py-2 text-sm rounded-sm border-0 font-medium text-white w-full text-center"
-                        onClick={handlerPhoto}
+              <Input
+                readOnly
+                fullWidth
+                type="number"
+                size="md"
+                label="Phone Number"
+                value={!query.phone ? "Number Not Found" : query.phone}
+                color="primary"
+                ref={phoneRef}
+              />
+              <Spacer y={0.5} />
+              <Input
+                bordered
+                fullWidth
+                size="md"
+                type="number"
+                label="ID Card Number"
+                placeholder="Your ID Card Number"
+                color="primary"
+                onKeyUp={(e) => setID(e.target.value)}
+              />
+              <Spacer y={1} />
+              <hr className="bg-gray-200 h-0.5 rounded-sm" />
+              <Spacer y={0.5} />
+              <Text color="primary" className="pl-2">
+                Photo Selfie
+              </Text>
+              <Grid.Container gap={0} justify="center">
+                <Grid xs={12} sm={6} lg={6}>
+                  <div className="w-full md:w-full h-full m-3 mx-20 md:mx-3 sm:ml-2 sm:mt-2 md:ml-20 md:mt-3">
+                    <Image
+                      width={150}
+                      height={150}
+                      src={!getImage ? UserImage : getImage}
+                      alt="Default Image"
+                      layout="responsive"
+                      className="transition ease-in-out delay-200"
+                    />
+                  </div>
+                </Grid>
+                <Grid xs={12} sm={6} lg={6}>
+                  <div className="w-full h-full m-3 mx-10 md:mx-3 sm:mr-2 sm:mt-2 md:mr-20 md:mt-3">
+                    <button
+                      class="bg-blue-500 hover:bg-blue-400 flex justify-center items-center px-6 py-2 text-sm rounded-sm border-0 font-medium text-white w-full text-center"
+                      onClick={handlerPhoto}
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        class="h-6 w-6 mr-2"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
                       >
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          class="h-6 w-6 mr-2"
-                          fill="none"
-                          viewBox="0 0 24 24"
-                          stroke="currentColor"
-                        >
-                          <path d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
-                          <path d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
-                        </svg>
-                        Take A Selfie
-                      </button>
-                      <p className="text-center text-blue-500 py-[0.2em] md:py-2">
-                        or
+                        <path d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
+                        <path d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
+                      </svg>
+                      Take A Selfie
+                    </button>
+                    <p className="text-center text-blue-500 py-[0.2em] md:py-2">
+                      or
+                    </p>
+                    <input
+                      onChange={changeImage}
+                      type="file"
+                      name="image"
+                      id="file"
+                      className="inputfile"
+                      ref={uploadRef}
+                    />
+                    <label for="file">Choose a file</label>
+                    {getImageValid == "" ? (
+                      ""
+                    ) : (
+                      <p className="text-center text-xs mt-3 bg-red-500 py-2 text-white">
+                        Invalid image. Please try again
                       </p>
-                      <input
-                        onChange={changeImage}
-                        type="file"
-                        name="image"
-                        id="file"
-                        className="inputfile"
-                        ref={uploadRef}
-                      />
-                      <label for="file">Choose a file</label>
-                      {getImageValid == "" ? (
-                        ""
-                      ) : (
-                        <p className="text-center text-xs mt-3 bg-red-500 py-2 text-white">
-                          Invalid image. Please try again
-                        </p>
-                        // <Text>
-                        // </Text>
-                      )}
-                    </div>
-                  </Grid>
-                </Grid.Container>
-                <div className="p-5 hidden">
-                  <Container>
-                    <Row gap={0}>
-                      {/* <Col span={1}></Col> */}
-                      <Col span={5} className="shadow-lg shadow-slate-100">
-                        <Image
-                          width={150}
-                          height={150}
-                          src={!getImage ? UserImage : getImage}
-                          alt="Default Image"
-                          layout="responsive"
-                          className="transition ease-in-out delay-200"
-                        />
-                      </Col>
-                      <Col span={1}></Col>
-                      <Col span={6}>
-                        <Button
-                          auto
-                          icon={<CameraIcon fill="currentColor" />}
-                          className="bg-blue-500 hover:bg-blue-400 w-full rounded-sm"
-                          size="md"
-                          // color="gradient"
-                          onClick={handlerPhoto}
-                        >
-                          Take A Selfie
-                        </Button>
-                        <Text
-                          color="primary"
-                          className="text-center"
-                          css={{ py: "$1" }}
-                        >
-                          or
-                        </Text>
-                        <input
-                          onChange={changeImage}
-                          type="file"
-                          name="image"
-                          id="file"
-                          className="inputfile"
-                          ref={uploadRef}
-                        />
-                        <label for="file">Choose a file</label>
-                        {getImageValid == "" ? (
-                          ""
-                        ) : (
-                          <Text className="text-center text-xs mt-2 bg-red-500 py-1 text-white">
-                            Invalid image. Please try again
-                          </Text>
-                        )}
-                      </Col>
-                      {/* <Col span={1}></Col> */}
-                    </Row>
-                  </Container>
-                </div>
-              </form>
+                      // <Text>
+                      // </Text>
+                    )}
+                  </div>
+                </Grid>
+              </Grid.Container>
             </Card.Body>
             <span className="h-20 md:h-14"></span>
             {/* <Spacer y={4} /> */}
