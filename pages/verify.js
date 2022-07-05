@@ -96,36 +96,16 @@ export default function App() {
   };
 
   const sendToBot = async (result) => {
+    let resultParam = result.errorCode != 1000 ? 'other' : result.verificationResult 
     const url =
       "https://api.infobip.com/bots/webhook/" +
       sessionid +
       "?resultparam=" +
-      result.verificationResult +
+      resultParam +
       "";
     const response = await fetch(url);
-    // const responseData = await response.json();
-    // console.log(responseData);
-    // try {
-    //   switch (responseData.serviceException.errorCode) {
-    //     case 40401:
-    //       setResponseServer(
-    //         "Error! " +
-    //           responseData.serviceException.errorCode +
-    //           " | " +
-    //           responseData.serviceException.message
-    //       );
-
-    //       break;
-    //     default:
-    //       setResponseServer("success");
-    //       break;
-    //   }
-    // } catch (err) {
-    //   const errorMsg =
-    //     "Error! " + response.status + " | " + response.statusText;
-    //   setResponseServer(errorMsg);
-    // }
   };
+
   const checkInput = () => {
     if (getID != null && getImage != null) {
       setInputStatus(true);
