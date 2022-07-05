@@ -22,7 +22,7 @@ import {
 
 export default function App() {
   const { query } = useRouter();
-  const sessionid = !query.sessionid ? "" : query.sessionid;
+  const sessionid = !query.session_id ? "" : query.session_id;
   const phone = !query.phone ? "" : query.phone;
 
   const [getImage, setImage] = useState("");
@@ -97,13 +97,13 @@ export default function App() {
   const sendToBot = async (result) => {
     const url =
       "https://api.infobip.com/bots/webhook/" +
-      result.sessionid +
+      sessionid +
       "?resultparam=" +
       result.verificationResult +
       "";
     const response = await fetch(url);
-    const responseData = await response.json();
-    console.log(responseData);
+    // const responseData = await response.json();
+    // console.log(responseData);
     // try {
     //   switch (responseData.serviceException.errorCode) {
     //     case 40401:
@@ -173,8 +173,8 @@ export default function App() {
       closeHandler();
     }, countdown);
 
-    window.open("about:blank", "_self");
-    window.close();
+    // window.open("about:blank", "_self");
+    // window.close();
   };
 
   const ModalSelfie = () => {

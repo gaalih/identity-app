@@ -38,8 +38,8 @@ async function send(req, res) {
 
     try {
     const response = await fetch(
-      // "https://sandbox.cdi-systems.com:8443/eKYC_MW/request",
-      "https://949ca44c-0e92-4b8e-97f6-db4802130f03.mock.pstmn.io/verify",
+      "https://sandbox.cdi-systems.com:8443/eKYC_MW/request",
+      // "https://949ca44c-0e92-4b8e-97f6-db4802130f03.mock.pstmn.io/verify",
       {
         method: "POST",
         body: JSON.stringify(formData),
