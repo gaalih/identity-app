@@ -169,9 +169,9 @@ export default function App() {
       if (isMobile) {
         window.location.href = "https://wa.me/447860099299?text&app";
       } else {
-        // window.open("location", "_self", "");
-        // window.top.close();
-        window.close();
+        window.open("location", "_self", "");
+        window.top.close();
+        // window.close();
       }
 
       closeHandler();
