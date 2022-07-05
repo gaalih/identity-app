@@ -95,7 +95,8 @@ export default function App() {
   };
 
   const sendToBot = async (result) => {
-    let resultParam = result.errorCode != 1000 ? 'other' : result.verificationResult 
+    let resultParam =
+      result.errorCode != 1000 ? "other" : result.verificationResult;
     const url =
       "https://api.infobip.com/bots/webhook/" +
       sessionid +
@@ -370,9 +371,19 @@ export default function App() {
               <Text color="primary" className="pl-2">
                 Photo Selfie
               </Text>
-              <Grid.Container gap={0} justify="center">
-                <Grid xs={12} sm={6} lg={6}>
-                  <div className="w-full md:w-full h-full m-3 mx-20 md:mx-3 sm:ml-2 sm:mt-2 md:ml-20 md:mt-3">
+              <Grid.Container
+                gap={1}
+                justify="center"
+                // css={{ px: "$10", py: "$10" }}
+              >
+                <Grid
+                  xs={5}
+                  sm={6}
+                  lg={6}
+                  // css={{ py: "$1" }}
+                >
+                  {/* <div className="w-full md:w-full h-full m-3 mx-20 md:mx-3 sm:ml-2 sm:mt-2 md:ml-20 md:mt-3"> */}
+                  <div className="w-full">
                     <Image
                       width={150}
                       height={150}
@@ -383,15 +394,16 @@ export default function App() {
                     />
                   </div>
                 </Grid>
-                <Grid xs={12} sm={6} lg={6}>
-                  <div className="w-full h-full m-3 mx-10 md:mx-3 sm:mr-2 sm:mt-2 md:mr-20 md:mt-3">
+                <Grid xs={7} sm={6} lg={6}>
+                  {/* <div className="w-full h-full m-3 mx-10 md:mx-3 sm:mr-2 sm:mt-2 md:mr-20 md:mt-3"> */}
+                  <div className="w-full">
                     <button
-                      class="bg-blue-500 hover:bg-blue-400 flex justify-center items-center px-6 py-2 text-sm rounded-sm border-0 font-medium text-white w-full text-center"
+                      class="bg-blue-500 text-xs sm:text-xs md:text-sm hover:bg-blue-400 flex justify-center items-center px-6 py-2 rounded-sm border-0 font-medium text-white w-full text-center"
                       onClick={handlerPhoto}
                     >
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
-                        class="h-6 w-6 mr-2"
+                        class="h-4 w-4 mr-1 sm:h-4 sm:w-4 sm:mr-1 md:h-6 md:w-6 md:mr-3"
                         fill="none"
                         viewBox="0 0 24 24"
                         stroke="currentColor"
