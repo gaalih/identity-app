@@ -8,7 +8,7 @@ function App({ Component, pageProps }) {
     <NextUIProvider>
       {/* <Navbar /> */}
       <Navigation />
-      <div className="container mx-auto mt-5">
+      <div className="container mx-auto mt-1">
         <Component {...pageProps} />
       </div>
     </NextUIProvider>
