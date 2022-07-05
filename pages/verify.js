@@ -6,6 +6,7 @@ import { useRouter } from "next/router";
 import UserImage from "./img/user.svg";
 import { CameraIcon } from "../elements/CameraIcon";
 import Webcam from "react-webcam";
+import {isMobile} from 'react-device-detect';
 import {
   Container,
   Grid,
@@ -187,9 +188,13 @@ export default function App() {
     setTimeout(() => {
       closeHandler();
     }, countdown);
-
-    // window.open("about:blank", "_self");
-    // window.close();
+    console.log(isMobile)
+    if (isMobile) {
+        window.location.href = "https://wa.me/"+phone+"?text&app";
+    } else {
+      window.open("about:blank", "_self");
+      window.close();
+    }
   };
 
   const ModalSelfie = () => {
