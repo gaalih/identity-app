@@ -188,12 +188,11 @@ export default function App() {
     setTimeout(() => {
       closeHandler();
     }, countdown);
-    console.log(isMobile)
     if (isMobile) {
-        window.location.href = "https://wa.me/"+phone+"?text&app";
+        window.location.href = "https://wa.me/447860099299?text&app";
     } else {
-      window.open("about:blank", "_self");
-      window.close();
+      window.open('location', '_self', '');
+      window.top.close();
     }
   };
 
