@@ -26,7 +26,7 @@ export default function App() {
   const phone = !query.phone ? "" : query.phone;
 
   const [getImage, setImage] = useState("");
-  const [getID, setID] = useState();
+  const [getID, setID] = useState("");
   const [getImageValid, setImageValid] = useState("");
 
   const phoneRef = useRef();
@@ -107,7 +107,7 @@ export default function App() {
   };
 
   const checkInput = () => {
-    if (getID != null && getImage != null) {
+    if (getID != "" && getImage != "") {
       setInputStatus(true);
     } else {
       if (sessionid != "" && phone != "") {
@@ -167,14 +167,14 @@ export default function App() {
     }
 
     setTimeout(() => {
-      if (isMobile) {
-        window.location.href = "https://wa.me/447860099299?text&app";
-      } else {
-        window.open("location", "_self", "");
-        window.top.close();
-        // window.close();
-      }
-
+      // if (isMobile) {
+      //   window.location.href = "https://wa.me/447860099299?text&app";
+      // } else {
+      //   window.open("location", "_self", "");
+      //   window.top.close();
+      //   // window.close();
+      // }
+      window.location.href = "https://wa.me/447860099299?text&app";
       closeHandler();
     }, countdown);
   };
@@ -213,7 +213,7 @@ export default function App() {
 
   const ModalConfirm = () => {
     let error = false;
-    if (getInputStatus == true) {
+    if (getInputStatus === true) {
       error = false;
     } else {
       error = true;
@@ -227,14 +227,25 @@ export default function App() {
         onClose={closeHandler}
         className="mx-5"
       >
-        <Modal.Body>
-          <Text>
-            {error == true ? (
-              <Text>{getInputStatus}</Text>
-            ) : (
-              <Text>Are you sure to process the data?</Text>
-            )}
-          </Text>
+        <Modal.Body className="pt-5">
+          {error == true ? (
+            <Text className="flex justify-center items-center text-orange-600">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-4 w-4 mr-1 sm:h-4 sm:w-4 sm:mr-1 md:h-6 md:w-6 md:mr-2"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path d="M20.618 5.984A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016zM12 9v2m0 4h.01" />
+              </svg>
+              {getInputStatus}
+            </Text>
+          ) : (
+            <Text className="text-blue-500">
+              Are you sure to process the data?
+            </Text>
+          )}
         </Modal.Body>
         <Modal.Footer>
           <Button
@@ -247,11 +258,19 @@ export default function App() {
             Cancel
           </Button>
           {error == true ? (
-            <Button auto onClick={closeHandler} className="bg-blue-400">
+            <Button
+              auto
+              onClick={closeHandler}
+              className="bg-orange-400 hover:bg-orange-300"
+            >
               OK
             </Button>
           ) : (
-            <Button auto onClick={submitForm} className="bg-blue-400">
+            <Button
+              auto
+              onClick={submitForm}
+              className="bg-blue-400 hover:bg-blue-300"
+            >
               Yes
             </Button>
           )}
@@ -278,35 +297,15 @@ export default function App() {
         preventClose
         className="mx-5"
       >
-        <Modal.Body>
+        <Modal.Body className="pt-5">
           <Text className="text-center">{msg}</Text>
           <Spacer y={0.1} />
           <div className="flex items-center justify-center">
             {getResponseServer == "" ? (
-              // <Loading size="xl" />
-              // <svg
-              //   className="animate-spin h-20 w-20 text-blue-500 text-center stroke-2"
-              //   xmlns="http://www.w3.org/2000/svg"
-              //   fill="none"
-              //   viewBox="0 0 24 24"
-              // >
-              //   <circle
-              //     className="opacity-25"
-              //     cx="12"
-              //     cy="12"
-              //     r="10"
-              //     stroke="currentColor"
-              //   ></circle>
-              //   <path
-              //     className="opacity-75"
-              //     fill="currentColor"
-              //     d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-              //   ></path>
-              // </svg>
               <div className="p-3">
-                <span class="flex h-10 w-10">
-                  <span class="animate-ping absolute inline-flex h-10 w-10 rounded-full bg-sky-400 opacity-75"></span>
-                  <span class="relative inline-flex rounded-full h-10 w-10 bg-sky-500"></span>
+                <span className="flex h-10 w-10">
+                  <span className="animate-ping absolute inline-flex h-10 w-10 rounded-full bg-sky-400 opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-10 w-10 bg-sky-500"></span>
                 </span>
               </div>
             ) : getResponseServer == "success" ? (
@@ -339,155 +338,142 @@ export default function App() {
 
   return (
     <div>
-      <Grid.Container gap={0} justify="center">
-        <Grid xs={10} md={6} lg={6}>
-          <Card>
-            {/* css={{ px: "$15", py: "$10" }} */}
-            <Card.Body className="px-7 py-7 sm:px-5 sm:py-7 md:px-11">
-              <Input
-                readOnly
-                fullWidth
-                type="number"
-                size="md"
-                label="Phone Number"
-                value={!query.phone ? "Number Not Found" : query.phone}
-                color="primary"
-                ref={phoneRef}
-              />
-              <Spacer y={0.5} />
-              <Input
-                bordered
-                fullWidth
-                size="md"
-                type="number"
-                label="ID Card Number"
-                placeholder="Your ID Card Number"
-                color="primary"
-                onKeyUp={(e) => setID(e.target.value)}
-              />
-              <Spacer y={1} />
-              <hr className="bg-gray-200 h-0.5 rounded-sm" />
-              <Spacer y={0.5} />
-              <Text color="primary" className="pl-2">
-                Photo Selfie
-              </Text>
-              <Grid.Container
-                gap={1}
-                justify="center"
-                // css={{ px: "$10", py: "$10" }}
-              >
-                <Grid
-                  xs={5}
-                  sm={6}
-                  lg={6}
-                  // css={{ py: "$1" }}
-                >
-                  {/* <div className="w-full md:w-full h-full m-3 mx-20 md:mx-3 sm:ml-2 sm:mt-2 md:ml-20 md:mt-3"> */}
-                  <div className="w-full">
-                    <Image
-                      width={150}
-                      height={150}
-                      src={!getImage ? UserImage : getImage}
-                      alt="Default Image"
-                      layout="responsive"
-                      className="transition ease-in-out delay-200"
-                    />
-                  </div>
-                </Grid>
-                <Grid xs={7} sm={6} lg={6}>
-                  {/* <div className="w-full h-full m-3 mx-10 md:mx-3 sm:mr-2 sm:mt-2 md:mr-20 md:mt-3"> */}
-                  <div className="w-full">
-                    <button
-                      class="bg-blue-500 text-xs sm:text-xs md:text-sm hover:bg-blue-400 flex justify-center items-center px-6 py-2 rounded-sm border-0 font-medium text-white w-full text-center"
-                      onClick={handlerPhoto}
+      <Container xs={10} md={6} lg={6}>
+        <Card>
+          <Card.Body className="overflow-hidden px-5 md:px-10">
+            <Grid.Container gap={1.3} justify="center">
+              <Grid xs={12} md={12} lg={12}>
+                <Input
+                  readOnly
+                  fullWidth
+                  type="number"
+                  size="md"
+                  label="Phone Number"
+                  value={!query.phone ? "Number Not Found" : query.phone}
+                  color="primary"
+                  ref={phoneRef}
+                />
+              </Grid>
+              <Grid xs={12} md={12} lg={12}>
+                <Input
+                  bordered
+                  fullWidth
+                  size="md"
+                  type="number"
+                  label="ID Card Number"
+                  placeholder="Your ID Card Number"
+                  color="primary"
+                  onKeyUp={(e) => setID(e.target.value)}
+                />
+              </Grid>
+            </Grid.Container>
+            {/* <Spacer y={1.2} /> */}
+            {/* <hr className="bg-gray-200 h-0.5 rounded-sm" /> */}
+            {/* <Spacer y={0.5} /> */}
+
+            <Grid.Container gap={1.3} justify="center">
+              <Grid xs={12} md={12} lg={12}>
+                <Text color="primary" className="pl-2">
+                  Photo Selfie
+                </Text>
+              </Grid>
+              <Grid xs={5} sm={6} lg={6} className="md:px-5">
+                <div className="w-full">
+                  <Image
+                    width={150}
+                    height={150}
+                    src={!getImage ? UserImage : getImage}
+                    alt="Default Image"
+                    layout="responsive"
+                    className="transition ease-in-out delay-200"
+                  />
+                </div>
+              </Grid>
+              <Grid xs={7} sm={6} lg={6} className="md:px-4">
+                <div className="w-full">
+                  <button
+                    className="bg-blue-500 text-xs sm:text-xs md:text-sm hover:bg-blue-400 flex justify-center items-center px-6 py-2 rounded-sm border-0 font-medium text-white w-full text-center"
+                    onClick={handlerPhoto}
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="h-4 w-4 mr-1 sm:h-4 sm:w-4 sm:mr-1 md:h-6 md:w-6 md:mr-2"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
                     >
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        class="h-4 w-4 mr-1 sm:h-4 sm:w-4 sm:mr-1 md:h-6 md:w-6 md:mr-3"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                      >
-                        <path d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
-                        <path d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
-                      </svg>
-                      Take A Selfie
-                    </button>
-                    <p className="text-center text-blue-500 py-[0.2em] md:py-2">
-                      or
+                      <path d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
+                      <path d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
+                    </svg>
+                    Take A Selfie
+                  </button>
+                  <p className="text-center text-blue-500 py-[0.2em] md:py-2">
+                    or
+                  </p>
+                  <input
+                    onChange={changeImage}
+                    type="file"
+                    name="image"
+                    id="file"
+                    className="inputfile"
+                    ref={uploadRef}
+                  />
+
+                  <label
+                    htmlFor="file"
+                    // for="file"
+                    className="bg-blue-500 text-xs sm:text-xs md:text-sm hover:bg-blue-400 flex justify-center items-center px-6 py-2 rounded-sm border-0 font-medium text-white w-full text-center"
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="h-4 w-4 mr-1 sm:h-4 sm:w-4 sm:mr-0.5 md:h-6 md:w-6 md:mr-2"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path d="M5 19a2 2 0 01-2-2V7a2 2 0 012-2h4l2 2h4a2 2 0 012 2v1M5 19h14a2 2 0 002-2v-5a2 2 0 00-2-2H9a2 2 0 00-2 2v5a2 2 0 01-2 2z" />
+                    </svg>
+                    Choose a file
+                  </label>
+                  {getImageValid == "" ? (
+                    ""
+                  ) : (
+                    <p className="text-center text-xs mt-3 bg-red-500 py-2 text-white">
+                      Invalid image. Please try again
                     </p>
-                    <input
-                      onChange={changeImage}
-                      type="file"
-                      name="image"
-                      id="file"
-                      className="inputfile"
-                      ref={uploadRef}
-                    />
-                    <label for="file">Choose a file</label>
-                    {getImageValid == "" ? (
-                      ""
-                    ) : (
-                      <p className="text-center text-xs mt-3 bg-red-500 py-2 text-white">
-                        Invalid image. Please try again
-                      </p>
-                      // <Text>
-                      // </Text>
-                    )}
-                  </div>
-                </Grid>
-              </Grid.Container>
-            </Card.Body>
-            <span className="h-[4.5rem] md:h-16"></span>
-            {/* <Spacer y={4} /> */}
-            <Card.Footer
-              // isBlurred
-              css={{
-                px: "$15",
-                pb: "$10",
-                // py: "$10",
-                position: "absolute",
-                // bgBlur: "#ffffff66",
-                // borderTop:
-                //   "$borderWeights$light solid rgba(255, 255, 255, 0.2)",
-                bottom: 0,
-                zIndex: 1,
-              }}
-            >
-              <div className="flex w-full justify-end">
+                  )}
+                </div>
+              </Grid>
+            </Grid.Container>
+            <Spacer y={1} />
+            <Grid.Container gap={0} justify="right" className="px-2">
+              <Grid xs={12} sm={5} lg={5}>
                 <Button
-                  className="bg-blue-500 hover:bg-blue-400 rounded-sm h-14 w-full md:w-2/5"
+                  className="bg-blue-500 hover:bg-blue-400 rounded-sm h-14 w-full text-xs md:text-sm "
                   size="lg"
                   shadow
                   auto
                   onPress={checkInput}
                 >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-4 w-4 mr-1 sm:h-4 sm:w-4 sm:mr-0.5 md:h-6 md:w-6 md:mr-2"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
+                  </svg>
                   Send Data
                 </Button>
-              </div>
-              {/* <Row>
-                <Col></Col>
-                <Col>
-                  <Row justify="flex-end">
-                    <Button
-                      className="bg-blue-500 hover:bg-blue-400 rounded-sm"
-                      size="lg"
-                      shadow
-                      auto
-                      onPress={checkInput}
-                    >
-                      Send Data
-                    </Button>
-                  </Row>
-                </Col>
-              </Row> */}
-            </Card.Footer>
-          </Card>
-          <ModalSelfie />
-          <ModalConfirm />
-          <ModalLoading />
-        </Grid>
-      </Grid.Container>
+              </Grid>
+            </Grid.Container>
+          </Card.Body>
+        </Card>
+        <ModalSelfie />
+        <ModalConfirm />
+        <ModalLoading />
+      </Container>
     </div>
   );
 }
