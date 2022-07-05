@@ -44,10 +44,10 @@ export default function App() {
   // modal variable
   const [photoVisible, setPhotoVisible] = useState(false);
   const [confirmVisible, setConfirmVisible] = useState(false);
+  const [getInputStatus, setInputStatus] = useState(false);
   const [loadingVisible, setLoadingVisible] = useState(false);
   const [getResponseServer, setResponseServer] = useState("");
   const handlerPhoto = () => setPhotoVisible(true);
-  const handlerConfirm = () => setConfirmVisible(true);
 
   const closeHandler = () => {
     setPhotoVisible(false);
@@ -89,7 +89,7 @@ export default function App() {
       if (fileName != "") {
         setImageValid("Not valid");
         setImage("");
-        console.log("File Extension Not Valid");
+        console.log("Invalid file extension");
       }
     }
   };
@@ -125,6 +125,21 @@ export default function App() {
     //   setResponseServer(errorMsg);
     // }
   };
+  const checkInput = () => {
+    if (getID != "" && getImage != "") {
+      setInputStatus(true);
+      console.log("success");
+    } else {
+      if (sessionid != "" && phone != "") {
+        setInputStatus("Input must be filled. Check your data again");
+        console.log("input kosong");
+      } else {
+        setInputStatus("Invalid session or phone number.");
+        console.log("session kosong");
+      }
+    }
+    setConfirmVisible(true);
+  };
 
   const submitForm = async () => {
     closeHandler();
@@ -145,7 +160,7 @@ export default function App() {
     });
 
     let result = "";
-    let countdown = 5000;
+    let countdown = 3000;
     try {
       result = await response.json();
       result.result.sessionid = sessionid;
@@ -160,7 +175,7 @@ export default function App() {
           sendToBot(result.result);
           break;
         default:
-          setResponseServer("Something Wrong");
+          setResponseServer("Something wrong. Please try again..");
           break;
       }
     } catch (err) {
@@ -209,36 +224,61 @@ export default function App() {
     );
   };
 
-  // const ModalConfirm = () => {
-  //   return (
-  //     <Modal
-  //       closeButton
-  //       blur
-  //       aria-labelledby="modal-title"
-  //       open={confirmVisible}
-  //       onClose={closeHandler}
-  //     >
-  //       <Modal.Body>
-  //         <Text>Are You Sure to Process Data?</Text>
-  //       </Modal.Body>
-  //       <Modal.Footer>
-  //         <Button auto flat color="error" onClick={closeHandler}>
-  //           Cancel
-  //         </Button>
-  //         <Button auto onClick={submitForm} className="bg-blue-400">
-  //           Yes
-  //         </Button>
-  //       </Modal.Footer>
-  //     </Modal>
-  //   );
-  // };
+  const ModalConfirm = () => {
+    let error = false;
+    if (getInputStatus == true) {
+      error = false;
+    } else {
+      error = true;
+    }
+    return (
+      <Modal
+        blur
+        preventClose
+        aria-labelledby="modal-title"
+        open={confirmVisible}
+        onClose={closeHandler}
+        className="mx-5"
+      >
+        <Modal.Body>
+          <Text>
+            {error == true ? (
+              <Text>{getInputStatus}</Text>
+            ) : (
+              <Text>Are you sure to process the data?</Text>
+            )}
+          </Text>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button
+            auto
+            flat
+            color="error"
+            onClick={closeHandler}
+            className={error == true ? "hidden" : "block"}
+          >
+            Cancel
+          </Button>
+          {error == true ? (
+            <Button auto onClick={closeHandler} className="bg-blue-400">
+              OK
+            </Button>
+          ) : (
+            <Button auto onClick={submitForm} className="bg-blue-400">
+              Yes
+            </Button>
+          )}
+        </Modal.Footer>
+      </Modal>
+    );
+  };
 
   const ModalLoading = () => {
     let msg = "";
     if (getResponseServer == "") {
-      msg = "Processing Data";
+      msg = "Processing data";
     } else if (getResponseServer == "success") {
-      msg = "Successfull";
+      msg = "Successful";
     } else {
       msg = getResponseServer;
     }
@@ -249,17 +289,43 @@ export default function App() {
         open={loadingVisible}
         onClose={closeHandler}
         preventClose
+        className="mx-5"
       >
         <Modal.Body>
           <Text className="text-center">{msg}</Text>
-          <Spacer y={0.2} />
-          <div class="flex items-center justify-center">
+          <Spacer y={0.1} />
+          <div className="flex items-center justify-center">
             {getResponseServer == "" ? (
-              <Loading size="lg" />
+              // <Loading size="xl" />
+              // <svg
+              //   className="animate-spin h-20 w-20 text-blue-500 text-center stroke-2"
+              //   xmlns="http://www.w3.org/2000/svg"
+              //   fill="none"
+              //   viewBox="0 0 24 24"
+              // >
+              //   <circle
+              //     className="opacity-25"
+              //     cx="12"
+              //     cy="12"
+              //     r="10"
+              //     stroke="currentColor"
+              //   ></circle>
+              //   <path
+              //     className="opacity-75"
+              //     fill="currentColor"
+              //     d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+              //   ></path>
+              // </svg>
+              <div className="p-3">
+                <span class="flex h-10 w-10">
+                  <span class="animate-ping absolute inline-flex h-10 w-10 rounded-full bg-sky-400 opacity-75"></span>
+                  <span class="relative inline-flex rounded-full h-10 w-10 bg-sky-500"></span>
+                </span>
+              </div>
             ) : getResponseServer == "success" ? (
               <svg
                 xmlns="http://www.w3.org/2000/svg"
-                className="h-20 w-20 text-green-500 text-center stroke-2"
+                className="h-20 w-20 m-0 text-green-500 text-center stroke-1"
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
@@ -269,12 +335,12 @@ export default function App() {
             ) : (
               <svg
                 xmlns="http://www.w3.org/2000/svg"
-                class="h-20 w-20 text-red-500 text-center stroke-2"
+                className="h-20 w-20 text-red-500 text-center stroke-1"
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
               >
-                <path d="M6 18L18 6M6 6l12 12" />
+                <path d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
             )}
           </div>
@@ -289,7 +355,8 @@ export default function App() {
       <Grid.Container gap={0} justify="center">
         <Grid xs={10} md={6} lg={6}>
           <Card>
-            <Card.Body css={{ px: "$15", py: "$10" }}>
+            {/* css={{ px: "$15", py: "$10" }} */}
+            <Card.Body className="px-7 py-7 sm:px-5 sm:py-7 md:px-11">
               <form action="">
                 <Input
                   readOnly
@@ -318,12 +385,66 @@ export default function App() {
                 <Text color="primary" className="pl-2">
                   Photo Selfie
                 </Text>
-
-                <div className="p-5">
+                <Grid.Container gap={0} justify="center">
+                  <Grid xs={12} sm={6} lg={6}>
+                    <div className="w-full md:w-full h-full m-3 mx-20 md:mx-3 sm:ml-2 sm:mt-2 md:ml-20 md:mt-3">
+                      <Image
+                        width={150}
+                        height={150}
+                        src={!getImage ? UserImage : getImage}
+                        alt="Default Image"
+                        layout="responsive"
+                        className="transition ease-in-out delay-200"
+                      />
+                    </div>
+                  </Grid>
+                  <Grid xs={12} sm={6} lg={6}>
+                    <div className="w-full h-full m-3 mx-10 md:mx-3 sm:mr-2 sm:mt-2 md:mr-20 md:mt-3">
+                      <button
+                        class="bg-blue-500 hover:bg-blue-400 flex justify-center items-center px-6 py-2 text-sm rounded-sm border-0 font-medium text-white w-full text-center"
+                        onClick={handlerPhoto}
+                      >
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          class="h-6 w-6 mr-2"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                        >
+                          <path d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
+                          <path d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
+                        </svg>
+                        Take A Selfie
+                      </button>
+                      <p className="text-center text-blue-500 py-[0.2em] md:py-2">
+                        or
+                      </p>
+                      <input
+                        onChange={changeImage}
+                        type="file"
+                        name="image"
+                        id="file"
+                        className="inputfile"
+                        ref={uploadRef}
+                      />
+                      <label for="file">Choose a file</label>
+                      {getImageValid == "" ? (
+                        ""
+                      ) : (
+                        <p className="text-center text-xs mt-3 bg-red-500 py-2 text-white">
+                          Invalid image. Please try again
+                        </p>
+                        // <Text>
+                        // </Text>
+                      )}
+                    </div>
+                  </Grid>
+                </Grid.Container>
+                <div className="p-5 hidden">
                   <Container>
                     <Row gap={0}>
-                      <Col span={1}></Col>
-                      <Col span={4} className="shadow-lg shadow-slate-100">
+                      {/* <Col span={1}></Col> */}
+                      <Col span={5} className="shadow-lg shadow-slate-100">
                         <Image
                           width={150}
                           height={150}
@@ -334,7 +455,7 @@ export default function App() {
                         />
                       </Col>
                       <Col span={1}></Col>
-                      <Col span={5}>
+                      <Col span={6}>
                         <Button
                           auto
                           icon={<CameraIcon fill="currentColor" />}
@@ -357,7 +478,7 @@ export default function App() {
                           type="file"
                           name="image"
                           id="file"
-                          class="inputfile"
+                          className="inputfile"
                           ref={uploadRef}
                         />
                         <label for="file">Choose a file</label>
@@ -365,17 +486,18 @@ export default function App() {
                           ""
                         ) : (
                           <Text className="text-center text-xs mt-2 bg-red-500 py-1 text-white">
-                            Image Not Valid. Please Try Again
+                            Invalid image. Please try again
                           </Text>
                         )}
                       </Col>
-                      <Col span={1}></Col>
+                      {/* <Col span={1}></Col> */}
                     </Row>
                   </Container>
                 </div>
               </form>
             </Card.Body>
-            <Spacer y={2.8} />
+            <span className="h-20 md:h-14"></span>
+            {/* <Spacer y={4} /> */}
             <Card.Footer
               isBlurred
               css={{
@@ -399,7 +521,7 @@ export default function App() {
                       size="lg"
                       shadow
                       auto
-                      onPress={submitForm}
+                      onPress={checkInput}
                     >
                       Send Data
                     </Button>
@@ -409,7 +531,7 @@ export default function App() {
             </Card.Footer>
           </Card>
           <ModalSelfie />
-          {/* <ModalConfirm /> */}
+          <ModalConfirm />
           <ModalLoading />
         </Grid>
       </Grid.Container>
