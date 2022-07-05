@@ -38,8 +38,8 @@ async function send(req, res) {
 
     try {
       const response = await fetch(
-        // "https://sandbox.cdi-systems.com:8443/eKYC_MW/request",
-        "https://949ca44c-0e92-4b8e-97f6-db4802130f03.mock.pstmn.io/verify",
+        "https://sandbox.cdi-systems.com:8443/eKYC_MW/request",
+        // "https://949ca44c-0e92-4b8e-97f6-db4802130f03.mock.pstmn.io/verify",
         {
           method: "POST",
           body: JSON.stringify(formData),
@@ -54,11 +54,9 @@ async function send(req, res) {
     } catch (err) {
       res.status(500).json({ error: "failed to load data" });
     }
-
     // res.json({ message: "Not Error!" + "-" + res.status });
-
     // const data = await response.json();
-    // res.json(res.status);
+    // res.json({ result });
     // res.json(data);
   }
 }
