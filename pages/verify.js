@@ -174,7 +174,9 @@ export default function App() {
       //   window.top.close();
       //   // window.close();
       // }
-      window.location.href = "https://wa.me/447860099299?text&app";
+      if (getResponseServer == "success") {
+        window.location.href = "https://wa.me/447860099299?text&app";
+      }
       closeHandler();
     }, countdown);
   };
