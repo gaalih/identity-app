@@ -97,13 +97,22 @@ export default function App() {
   const sendToBot = async (result) => {
     let resultParam =
       result.errorCode != 1000 ? "other" : result.verificationResult;
-    const url =
+    // console.log("param : " + result);
+    // console.log("error kode : " + result.errorCode);
+    // console.log("ver result : " + result.verificationResult);
+    // const url =
+    //   ;
+    const response = await fetch(
       "https://api.infobip.com/bots/webhook/" +
-      sessionid +
-      "?resultparam=" +
-      resultParam +
-      "";
-    const response = await fetch(url);
+        sessionid +
+        "?resultparam=" +
+        resultParam +
+        ""
+    );
+    const jsonData = await response.json();
+    // console.log(jsonData.serviceException);
+    // setR
+    // return jsonData;
   };
 
   const checkInput = () => {
@@ -138,34 +147,50 @@ export default function App() {
     });
 
     let result = "";
-    let countdown = 4000;
+    let responsePostData = "";
+    let countdown = 4000; //delay
     try {
       result = await response.json();
       result.result.sessionid = sessionid;
       switch (result.result.verificationResult) {
         case true:
-          setResponseServer("success");
-          sendToBot(result.result);
+          responsePostData = "success";
+          // setResponseServer("success");
+          // botDataSend = sendToBot(result.result);
           countdown = 2000;
           break;
         case false:
+          responsePostData = "success";
           // sukses, tapi verificationResult nya false
           // setResponseServer("Failed.");
-          setResponseServer("success");
-          sendToBot(result.result);
+          // setResponseServer("success");
+          // botDataSend = sendToBot(result.result);
+          countdown = 2000;
           break;
         default:
           const errMsg = result.result.errorMessage.split(":")[0];
-          setResponseServer("Failed: " + errMsg.toLowerCase());
+          responsePostData = "Failed: " + errMsg.toLowerCase();
+          // setResponseServer("Failed: " + errMsg.toLowerCase());
           break;
       }
     } catch (err) {
       const errorMsg =
         "Error! " + response.status + " | " + response.statusText;
       result = errorMsg;
-      setResponseServer(errorMsg);
+      // setResponseServer(errorMsg);
+      responsePostData = errorMsg;
     }
 
+    // console.log(responsePostData);
+    // if (responsePostData == "success") {
+    //   sendToBot(result.result);
+    // } else {
+    //   console.log("Error.");
+    // }
+    setResponseServer(responsePostData);
+
+    console.log(responsePostData);
+    console.log(getResponseServer);
     setTimeout(() => {
       // if (isMobile) {
       //   window.location.href = "https://wa.me/447860099299?text&app";
@@ -174,7 +199,13 @@ export default function App() {
       //   window.top.close();
       //   // window.close();
       // }
-      if (getResponseServer == "success") {
+      // if (getResponseServer == "success") {
+      //   window.location.href = "https://wa.me/447860099299?text&app";
+      // }
+      // console.log(getResponseServer);
+
+      if (responsePostData == "success") {
+        sendToBot(result.result);
         window.location.href = "https://wa.me/447860099299?text&app";
       }
       closeHandler();
