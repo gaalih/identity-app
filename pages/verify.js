@@ -109,7 +109,7 @@ export default function App() {
         resultParam +
         ""
     );
-    const jsonData = await response.json();
+    // const jsonData = await response.json();
     // console.log(jsonData.serviceException);
     // setR
     // return jsonData;
