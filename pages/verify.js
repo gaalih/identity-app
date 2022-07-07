@@ -193,6 +193,7 @@ export default function App() {
     console.log(getResponseServer);
     sendToBot(result.result);
 
+    
     setTimeout(() => {
       // if (isMobile) {
       //   window.location.href = "https://wa.me/447860099299?text&app";
