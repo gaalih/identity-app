@@ -191,10 +191,9 @@ export default function App() {
 
     console.log(responsePostData);
     console.log(getResponseServer);
-    sendToBot(result.result);
 
-    
-    setTimeout(() => {
+
+    setTimeout(async () => {
       // if (isMobile) {
       //   window.location.href = "https://wa.me/447860099299?text&app";
       // } else {
@@ -206,10 +205,11 @@ export default function App() {
       //   window.location.href = "https://wa.me/447860099299?text&app";
       // }
       // console.log(getResponseServer);
+      await sendToBot(result.result);
 
-      if (responsePostData == "success") {
+      // if (responsePostData == "success") {
         window.location.href = "https://wa.me/447860099299?text&app";
-      }
+      // }
       closeHandler();
     }, countdown);
   };
