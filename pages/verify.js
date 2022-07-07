@@ -232,7 +232,7 @@ export default function App() {
           </Text>
         </Modal.Header>
         <Modal.Body>
-          <Webcam audio={false} ref={webcamRef} screenshotFormat="image/jpeg" />
+          <Webcam ref={webcamRef}/>
         </Modal.Body>
         <Modal.Footer>
           <Button auto flat color="error" onClick={closeHandler}>
